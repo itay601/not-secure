@@ -12,7 +12,7 @@ services:
       MYSQL_DATABASE: Example 
     volumes:
       #- /mnt/c/users/itay/secure_project/sql_data:/var/lib/mysql
-      #- \src\DB\init.sql:/docker-entrypoint-initdb.d/index.sql
+      #- \src\DB\init__.sql:/docker-entrypoint-initdb.d/index.sql
     ports:
       - 3306:3306
 
