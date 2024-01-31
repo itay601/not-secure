@@ -1,14 +1,14 @@
-from flask import Flask ,Blueprint, render_template, request, flash, redirect, url_for
-#from . models import User
+from flask import Flask , render_template, request, flash, redirect, url_for, make_response,Response
 from werkzeug.security import generate_password_hash, check_password_hash
-#from . import db, mycursor   ##means from __init__.py import db
 
-
-
-
+from login import  login_user
+from req_db import *
 
 app = Flask(__name__)
 
+
+
+#need system_screen only with token in headers (not working)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
@@ -17,21 +17,26 @@ def index():
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        print('Username1:', username)
-        print('Password:', password) 
-        
-        #the input validation
-        if username =='s':
-            return render_template('system_screen.html')
+        token = login_user(username, password)
 
-        #now we need here to do input validation 
-        # for login file     
+        if token:
+            print(f"Login successful. Token: {token}")
+
+            # Render the template
+            rendered_template = render_template('system_screen.html')
+
+            # Create a response object and set the Authorization header
+            response = Response(rendered_template)
+            response.headers['Authorization'] = f'Bearer {token}'
+            return response
+           #print(f"Login successful. Token: {token}")
+           #return render_template('system_screen.html')   
      
     return render_template('login.html')
 
 
 
-
+    
 
 @app.route('/register.html', methods=['GET','POST'])
 def register():
@@ -39,11 +44,15 @@ def register():
         return render_template('register.html')
 
     elif request.method == 'POST':
+        id = request.form['id']
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
+
+        register_new_user(id , username , email , password)
+        return render_template('login.html')
         
-        insert_user_register_post(username,email,password)
+        
         return render_template('system_screen.html')
     return render_template('register.html')
 
@@ -53,9 +62,18 @@ def register():
 @app.route('/system_screen.html', methods=['GET','POST'])
 def system_screen():
     if request.method == 'GET':
-        return render_template('login.html')
-    #elif request.method == 'POST':
-
+        f= generate_token()
+        if validate_token==None:
+            return render_template('login.html')  
+        
+    elif request.method == 'POST':
+        name =request.Form['clientName']
+        email =request.Form['clientEmail']
+        phone =request.Form['clientPhone']
+        
+        insert_client(name,email,phone)
+        return render_template('system_screen.html')
+      
     return render_template('system_screen.html')
 
 
@@ -65,9 +83,15 @@ def system_screen():
 def change_password():
     if request.method == 'GET':
         return render_template('change_password.html')
-    #elif request.method == 'POST':
-
+    elif request.method == 'POST':
+        username =request.Form['username']
+        password_old =request.Form['currentPassword']
+        password_new =request.Form['newPassword']
+        insert_client(username,password_old,password_new)
+        return render_template('login.html') 
     return render_template('change_password.html')
+
+   
 
 
 
@@ -79,14 +103,6 @@ def forgot_password():
     #elif request.method == 'POST':
 
     return render_template('forgot_password.html')
-
-
-
-
-@app.route('/login.html', methods=['GET','POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
 
 
 
