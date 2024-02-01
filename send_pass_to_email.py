@@ -7,15 +7,19 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 
+
+
 def generate_random_password(length=12):
     import random
     import string
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(characters) for _ in range(length))
 
+
+
 def send_email(receiver_email, subject, body):
     sender_email = 'itaymerel1212@gmail.com'  # Replace with your email address
-    sender_password = 'itay152379198'  # Replace with your email password
+    sender_password = 'doom adjn fdtf ddrj'  # Replace with your email password
     smtp_server = 'smtp.gmail.com'  # Replace with your SMTP server
 
     message = MIMEMultipart()
@@ -36,7 +40,7 @@ def send_email(receiver_email, subject, body):
 
 
 
-def reset_password_and_send_email(username):
+def reset_password_and_send_email(email):
     host = '127.0.0.1'
     user = 'root'
     password = 'my-secret-pw'
@@ -53,13 +57,14 @@ def reset_password_and_send_email(username):
     try:
         with connection.cursor() as cursor:
             # Check if the user exists
-            sql_select_user = "SELECT * FROM user WHERE username=%s"
-            cursor.execute(sql_select_user, (username,))
+            sql_select_user = "SELECT * FROM user WHERE email=%s"
+            cursor.execute(sql_select_user, (email,))
             user_data = cursor.fetchone()
 
             if user_data:
                 # Generate a new random password
                 new_password = generate_random_password()
+                username= user_data['username']
 
                 # Update the user's password in the database
                 sql_update_password = "UPDATE user SET password=%s WHERE username=%s"
@@ -82,4 +87,4 @@ def reset_password_and_send_email(username):
         connection.close()
 
 
-reset_password_and_send_email("itay601")
+reset_password_and_send_email("itaymerel1212@gmail.com")

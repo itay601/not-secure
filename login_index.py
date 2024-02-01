@@ -67,7 +67,7 @@ def system_screen():
             return render_template('login.html')  
         
     elif request.method == 'POST':
-        name =request.Form['clientName']
+        name  =request.Form['clientName']
         email =request.Form['clientEmail']
         phone =request.Form['clientPhone']
         
@@ -83,11 +83,12 @@ def system_screen():
 def change_password():
     if request.method == 'GET':
         return render_template('change_password.html')
+
     elif request.method == 'POST':
         username =request.Form['username']
         password_old =request.Form['currentPassword']
         password_new =request.Form['newPassword']
-        insert_client(username,password_old,password_new)
+        change_password(username,password_old,password_new)
         return render_template('login.html') 
     return render_template('change_password.html')
 
@@ -100,9 +101,10 @@ def change_password():
 def forgot_password():
     if request.method == 'GET':
         return render_template('forgot_password.html')
-    #elif request.method == 'POST':
-
-    return render_template('forgot_password.html')
+    elif request.method == 'POST':
+        mail =request.Form['email']
+        reset_password_and_send_email(mail)
+        return render_template('login.html')
 
 
 
