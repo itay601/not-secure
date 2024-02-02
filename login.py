@@ -54,8 +54,8 @@ def login_user(username, password):
     try:
         with connection.cursor() as cursor:
             # Check if the username and password match a user in the database
-            sql = "SELECT * FROM user WHERE id=%s"
-            cursor.execute(sql, (id, ))
+            sql = "SELECT * FROM user WHERE username=%s"
+            cursor.execute(sql, (username , ))
 
             user_data = cursor.fetchone()
             print(user_data)
@@ -75,13 +75,13 @@ def login_user(username, password):
         connection.close()
 
 
-"""
-token = login_user("itay", "itay")
+'''
+token = login_user(0, "itay")
 
 if token:
     print(f"Login successful. Token: {token}")
 
-"""
+'''
 
 
 

@@ -56,7 +56,7 @@
 </head>
 <body>
 
-<form method="POST" action="/">
+<form method="POST" action="/system_screen.html">
     <h2>Insert New Client Details</h2>
 
     <label for="clientName">Client Name:</label>
@@ -71,16 +71,14 @@
     <button type="submit">Insert Client</button>
     <br>
     <br>
-    <div id="navigation">
-        <button><a href="login.html">Login page</a></button>
-        <button><a href="register.html">Register page</a></button>
-        <button><a href="change_password.html">Change Password</a></button>
-    </div>
+    
     
 </form>
-
-<div id="output"></div>
-
+<div id="navigation">
+    <button><a href="/">Login page</a></button>
+    <button><a href="register.html">Register page</a></button>
+    <button><a href="change_password.html">Change Password</a></button>
+</div>
 
 <script>
     document.getElementById('newClientForm').addEventListener('submit', function (event) {

@@ -3,6 +3,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from login import  login_user
 from req_db import *
+from send_pass_to_email import reset_password_and_send_email
+
+
 
 app = Flask(__name__)
 
@@ -27,7 +30,7 @@ def index():
 
             # Create a response object and set the Authorization header
             response = Response(rendered_template)
-            response.headers['Authorization'] = f'Bearer {token}'
+            #response.headers['Authorization'] = f'Bearer {token}'
             return response
            #print(f"Login successful. Token: {token}")
            #return render_template('system_screen.html')   
@@ -44,12 +47,12 @@ def register():
         return render_template('register.html')
 
     elif request.method == 'POST':
-        id = request.form['id']
+        id_ = request.form['id']
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
 
-        register_new_user(id , username , email , password)
+        register_new_user(id_ , username , email , password)
         return render_template('login.html')
         
         
@@ -67,9 +70,9 @@ def system_screen():
             return render_template('login.html')  
         
     elif request.method == 'POST':
-        name  =request.Form['clientName']
-        email =request.Form['clientEmail']
-        phone =request.Form['clientPhone']
+        name  =request.form['clientName']
+        email =request.form['clientEmail']
+        phone =request.form['clientPhone']
         
         insert_client(name,email,phone)
         return render_template('system_screen.html')
@@ -80,15 +83,15 @@ def system_screen():
 
 
 @app.route('/change_password.html', methods=['GET','POST'])
-def change_password():
+def change_password_():
     if request.method == 'GET':
         return render_template('change_password.html')
 
     elif request.method == 'POST':
-        username =request.Form['username']
-        password_old =request.Form['currentPassword']
-        password_new =request.Form['newPassword']
-        change_password(username,password_old,password_new)
+        username     = request.form['username']
+        password_old = request.form['currentPassword']
+        password_new = request.form['newPassword']
+        change_password(username, password_old, password_new)
         return render_template('login.html') 
     return render_template('change_password.html')
 
@@ -102,7 +105,7 @@ def forgot_password():
     if request.method == 'GET':
         return render_template('forgot_password.html')
     elif request.method == 'POST':
-        mail =request.Form['email']
+        mail =request.form['email']
         reset_password_and_send_email(mail)
         return render_template('login.html')
 
