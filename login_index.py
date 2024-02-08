@@ -1,5 +1,6 @@
 from flask import Flask , render_template, request, flash, redirect, url_for, make_response,Response
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
 from login import  login_user
 from req_db import *
@@ -8,6 +9,11 @@ from send_pass_to_email import reset_password_and_send_email
 
 
 app = Flask(__name__)
+
+
+app.config['JWT_SECRET_KEY'] = '7$*&?>fhd3433@#4227'  # Change this to a secure random key in production
+jwt = JWTManager(app)
+
 
 
 
@@ -20,21 +26,12 @@ def index():
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        token = login_user(username, password)
+        user_exist = login_user(username, password)
 
-        if token:
-            print(f"Login successful. Token: {token}")
-
+        if user_exist:
+            access_token = create_access_token(identity=username)
             # Render the template
-            rendered_template = render_template('system_screen.html')
-
-            # Create a response object and set the Authorization header
-            response = Response(rendered_template)
-            #response.headers['Authorization'] = f'Bearer {token}'
-            return response
-           #print(f"Login successful. Token: {token}")
-           #return render_template('system_screen.html')   
-     
+            return render_template('system_screen.html')  
     return render_template('login.html')
 
 
@@ -63,10 +60,12 @@ def register():
 
 
 @app.route('/system_screen.html', methods=['GET','POST'])
+@jwt_required()
 def system_screen():
     if request.method == 'GET':
-        f= generate_token()
-        if validate_token==None:
+        current_user = get_jwt_identity()
+        print(current_user)
+        if current_user==None:
             return render_template('login.html')  
         
     elif request.method == 'POST':
