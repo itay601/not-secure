@@ -2,21 +2,22 @@ CREATE DATABASE USERS;
 USE USERS;
 
 CREATE TABLE user(
-   id int not null,
+   id int not null AUTO_INCREMENT,
    username varchar(100) not null,
    email varchar(100) not null,
    password varchar(100) not null,
-   PRIMARY KEY(id)
+   PRIMARY KEY(id), UNIQUE(email)
 );
 
 insert into user(Id,username,email,password)
-values(0 , "itay" , "i@walla.com " , "pass");
+values("itay" , "i@walla.com " , "pass");
 
 CREATE TABLE clients(
+   id int not null AUTO_INCREMENT,
    name varchar(100) not null,
    email varchar(100) not null,
    phone varchar(30) not null,
-   PRIMARY KEY(email)
+   PRIMARY KEY(id), UNIQUE(email)
 );
 
 insert into clients(name,email,phone)
