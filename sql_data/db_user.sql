@@ -17,7 +17,7 @@ CREATE TABLE clients(
    name varchar(100) not null,
    email varchar(100) not null,
    phone varchar(30) not null,
-   PRIMARY KEY(id), UNIQUE(email)
+   PRIMARY KEY(id), UNIQUE(email), UNIQUE(phone)
 );
 
 insert into clients(name,email,phone)
