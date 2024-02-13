@@ -9,7 +9,7 @@ CREATE TABLE user(
    PRIMARY KEY(id), UNIQUE(email)
 );
 
-insert into user(Id,username,email,password)
+insert into user(username,email,password)
 values("itay" , "i@walla.com " , "pass");
 
 CREATE TABLE clients(
@@ -17,9 +17,9 @@ CREATE TABLE clients(
    name varchar(100) not null,
    email varchar(100) not null,
    phone varchar(30) not null,
-   PRIMARY KEY(id), UNIQUE(email)
+   PRIMARY KEY(id), UNIQUE(email), UNIQUE(phone)
 );
 
 insert into clients(name,email,phone)
-values("ita" , "i@walla.com" , "05000000000");
+values("ita" , "i@walla.com" , "0500000000");
 
