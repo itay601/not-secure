@@ -71,6 +71,8 @@ def change_password(username, pWord):
         if connection:
             connection.close()
 
+
+
 def register_new_user(username, email, pWord):
     connection = connect_to_db()
     try:

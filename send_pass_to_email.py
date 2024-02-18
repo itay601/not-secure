@@ -17,6 +17,8 @@ def generate_random_password(length=12):
 
 
 
+
+
 def send_email(receiver_email, subject, body):
     sender_email = 'itaymerel1212@gmail.com'  # Replace with your email address
     sender_password = 'doom adjn fdtf ddrj'  # Replace with your email password
@@ -39,11 +41,13 @@ def send_email(receiver_email, subject, body):
 
 
 
+from argon2 import PasswordHasher
+
 
 def reset_password_and_send_email(email):
     host = '127.0.0.1'
     user = 'root'
-    password = 'my-secret-pw'
+    password = 'root'
     dbname = 'USERS'
 
     # Connect to the database
@@ -51,7 +55,7 @@ def reset_password_and_send_email(email):
                                 user=user,
                                 password=password,
                                 database=dbname,
-                                port=3456,
+                                port=3306,
                                 cursorclass=pymysql.cursors.DictCursor)
 
     try:
@@ -65,10 +69,14 @@ def reset_password_and_send_email(email):
                 # Generate a new random password
                 new_password = generate_random_password()
                 username= user_data['username']
+                ph = PasswordHasher()
+                pHash = ph.hash(new_password)
+           
+                
 
                 # Update the user's password in the database
                 sql_update_password = "UPDATE user SET password=%s WHERE username=%s"
-                cursor.execute(sql_update_password, (new_password, username))
+                cursor.execute(sql_update_password, (pHash, username))
 
                 # Send the new password to the user's email
                 receiver_email = user_data['email']
@@ -87,4 +95,3 @@ def reset_password_and_send_email(email):
         connection.close()
 
 
-#reset_password_and_send_email("itaymerel1212@gmail.com")
