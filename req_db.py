@@ -72,8 +72,8 @@ def change_password(username, pWord):
             connection.close()
 
 def register_new_user(username, email, pWord):
+    connection = connect_to_db()
     try:
-        connection = connect_to_db()
         with connection.cursor() as cursor:
             ph = PasswordHasher()
             passHash = ph.hash(pWord)
@@ -88,8 +88,11 @@ def register_new_user(username, email, pWord):
         print(f"Error: {e}")
 
     finally:
-        if connection:
-            connection.close()
+        connection.close()
+
+
+
+
 
 def register_new_client(username, email, phoneNum):
     try:
