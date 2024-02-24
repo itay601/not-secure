@@ -4,36 +4,38 @@ import string
 from argon2 import PasswordHasher
 
 
-
 def connect_to_db():
-    host = '127.0.0.1' 
-    user = 'root'
-    password = 'root' 
-    dbname = 'USERS'
+    host = "127.0.0.1"
+    user = "root"
+    password = "my-secret-pw"
+    dbname = "USERS"
 
     # Connect to the database
-    db_connection = pymysql.connect(host=host,
-                                    user=user,
-                                    password=password,
-                                    database=dbname,
-                                    port=3306,
-                                    cursorclass=pymysql.cursors.DictCursor)
-    
+    db_connection = pymysql.connect(
+        host=host,
+        user=user,
+        password=password,
+        database=dbname,
+        port=3456,
+        cursorclass=pymysql.cursors.DictCursor,
+    )
+
     return db_connection
+
 
 def validate_password(username, pWord):
     # Connect to the database
     connection = connect_to_db()
     try:
-        with connection.cursor() as cursor:           
+        with connection.cursor() as cursor:
             # Check if the username and password match a user in the database
             sql = "SELECT password FROM user WHERE username=%s"
-            cursor.execute(sql, (username , ))
+            cursor.execute(sql, (username,))
             pass_hash = cursor.fetchone()
             ph = PasswordHasher()
-           
-            #On success return 1
-            if ph.verify(pass_hash['password'], pWord):
+
+            # On success return 1
+            if ph.verify(pass_hash["password"], pWord):
                 return 1
             else:
                 print("Invalid username or password")
@@ -46,17 +48,24 @@ def validate_password(username, pWord):
         if connection:
             connection.close()
 
+
 def change_password(username, pWord):
     # Connect to the database
     ph = PasswordHasher()
     connection = connect_to_db()
     try:
-        with connection.cursor() as cursor:           
+        with connection.cursor() as cursor:
             # Check if the username and password match a user in the database
             sql = "UPDATE user SET password =%s WHERE username =%s"
             pHash = ph.hash(pWord)
             if ph.verify(pHash, pWord):
-                cursor.execute(sql, (pHash, username, ))
+                cursor.execute(
+                    sql,
+                    (
+                        pHash,
+                        username,
+                    ),
+                )
                 connection.commit()
                 print("commited update")
                 return 1
@@ -70,7 +79,6 @@ def change_password(username, pWord):
     finally:
         if connection:
             connection.close()
-
 
 
 def register_new_user(username, email, pWord):
@@ -93,9 +101,6 @@ def register_new_user(username, email, pWord):
         connection.close()
 
 
-
-
-
 def register_new_client(username, email, phoneNum):
     try:
         connection = connect_to_db()
@@ -115,19 +120,17 @@ def register_new_client(username, email, phoneNum):
             connection.close()
 
 
-
-
-
-'''
+"""
 Experimental from here down
 
 
-'''
+"""
+
+
 def generate_random_password(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
-    password = ''.join(random.choice(characters) for _ in range(length))
+    password = "".join(random.choice(characters) for _ in range(length))
     return password
-
 
 
 def show_user_db():
@@ -149,8 +152,6 @@ def show_user_db():
             connection.close()
 
 
-
-
 ###working and checked
 def show_client_db():
     # Connect to the database
@@ -169,13 +170,3 @@ def show_client_db():
     finally:
         if connection:
             connection.close()
-
-
-
-
-
-
-
-
-
-

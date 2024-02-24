@@ -2,13 +2,12 @@
 version: '3.8'
 
 services:
-
-  db:
-    image: csdb:Dockerfile1.0
-    restart: always
+  database:
+    build:
+      context: ./sql_data
+      dockerfile: Dockerfile
     ports:
-      - 3306:3306
-
+      - "3456:3456"
 
   adminer:
     image: adminer

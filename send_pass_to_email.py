@@ -1,6 +1,5 @@
-
 ###not working
-#generate password chenge password in db and send emial with th password
+# generate password chenge password in db and send emial with th password
 import pymysql
 import smtplib
 from email.mime.text import MIMEText
@@ -8,27 +7,24 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 
 
-
 def generate_random_password(length=12):
     import random
     import string
+
     characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(random.choice(characters) for _ in range(length))
-
-
-
+    return "".join(random.choice(characters) for _ in range(length))
 
 
 def send_email(receiver_email, subject, body):
-    sender_email = 'itaymerel1212@gmail.com'  # Replace with your email address
-    sender_password = 'doom adjn fdtf ddrj'  # Replace with your email password
-    smtp_server = 'smtp.gmail.com'  # Replace with your SMTP server
+    sender_email = "itaymerel1212@gmail.com"  # Replace with your email address
+    sender_password = "doom adjn fdtf ddrj"  # Replace with your email password
+    smtp_server = "smtp.gmail.com"  # Replace with your SMTP server
 
     message = MIMEMultipart()
-    message['From'] = sender_email
-    message['To'] = receiver_email
-    message['Subject'] = subject
-    message.attach(MIMEText(body, 'plain'))
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
 
     try:
         with smtplib.SMTP_SSL(smtp_server, 465) as server:
@@ -39,24 +35,24 @@ def send_email(receiver_email, subject, body):
         print(f"Failed to send email: {e}")
 
 
-
-
 from argon2 import PasswordHasher
 
 
 def reset_password_and_send_email(email):
-    host = '127.0.0.1'
-    user = 'root'
-    password = 'root'
-    dbname = 'USERS'
+    host = "127.0.0.1"
+    user = "root"
+    password = "my-secret-pw"
+    dbname = "USERS"
 
     # Connect to the database
-    connection = pymysql.connect(host=host,
-                                user=user,
-                                password=password,
-                                database=dbname,
-                                port=3306,
-                                cursorclass=pymysql.cursors.DictCursor)
+    connection = pymysql.connect(
+        host=host,
+        user=user,
+        password=password,
+        database=dbname,
+        port=3456,
+        cursorclass=pymysql.cursors.DictCursor,
+    )
 
     try:
         with connection.cursor() as cursor:
@@ -68,23 +64,23 @@ def reset_password_and_send_email(email):
             if user_data:
                 # Generate a new random password
                 new_password = generate_random_password()
-                username= user_data['username']
+                username = user_data["username"]
                 ph = PasswordHasher()
                 pHash = ph.hash(new_password)
-           
-                
 
                 # Update the user's password in the database
                 sql_update_password = "UPDATE user SET password=%s WHERE username=%s"
                 cursor.execute(sql_update_password, (pHash, username))
 
                 # Send the new password to the user's email
-                receiver_email = user_data['email']
+                receiver_email = user_data["email"]
                 email_subject = "Password Reset"
                 email_body = f"Your new password is: {new_password}"
                 send_email(receiver_email, email_subject, email_body)
-                
-                print("Password reset successfully. Check your email for the new password.")
+
+                print(
+                    "Password reset successfully. Check your email for the new password."
+                )
             else:
                 print("User not found.")
 
@@ -93,5 +89,3 @@ def reset_password_and_send_email(email):
 
     finally:
         connection.close()
-
-
