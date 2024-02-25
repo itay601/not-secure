@@ -49,14 +49,18 @@
 </head>
 <body>
 
-<form method="POST" action="/register.html">
+<form  method="POST" action="/register.html">
     <h2>User Registration</h2>
 
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" required>
 
-    <label for="password">Password (at least 8 characters, including uppercase, lowercase, and a number):</label>
-    <input type="password" id="password" name="password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$" title="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number." required>
+    <label for="password1">Password (at least 8 characters, including uppercase, lowercase, and a number):</label>
+    <input type="password" id="password1" name="password1" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$" title="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number." required>
+
+    <label for="password2">Password (at least 8 characters, including uppercase, lowercase, and a number):</label>
+    <input type="password" id="password2" name="password2" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$" title="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, and one number." required>
+
 
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required>
@@ -78,13 +82,24 @@
         // You can add your validation and user registration logic here.
         // For simplicity, let's just log the form data to the console.
         console.log('Username:', document.getElementById('username').value);
-        console.log('Password:', document.getElementById('password').value);
         console.log('Email:', document.getElementById('email').value);
 
+         // Get password values
+        var password1 = document.getElementById('password1').value;
+        var password2 = document.getElementById('password2').value;
+
+        // Check if passwords match
+        if (password1 !== password2) {
+            alert('Passwords do not match!');
+        }
         // Reset the form
         this.reset();
     });
+
 </script>
+
+
+
 
 </body>
 </html>

@@ -4,6 +4,38 @@ import string
 from argon2 import PasswordHasher
 
 
+###########################################################################
+#chack common passwords  /// ilustrate large library of common passwords
+passwords111= {"passwords":{"12345678910" , "Password" ,"P@ssw0rd",
+                          "Pass@123" , "Aa@123456","1q2w3e4r5t"}}
+
+def common_passwords(password,passwords111):
+    for x in passwords111["passwords"]:
+        if x == password:
+            print("chahnge password")
+        
+    print("not common password")    
+
+#common_passwords("assword",passwords111)
+##########################################################################
+import hashlib
+import random
+import string
+
+def hash1_password(password):
+    sha1_hash = hashlib.sha1(random_password.encode()).hexdigest()
+    return sha1_hash
+
+
+
+
+
+
+
+
+
+
+
 def connect_to_db():
     host = "127.0.0.1"
     user = "root"

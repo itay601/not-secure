@@ -48,6 +48,10 @@ jwt = JWTManager(app)
 """
 
 
+
+
+
+
 # need system_screen only with token in headers (not working)
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -73,9 +77,13 @@ def register():
         email = request.form["email"]
 
         if request.form["user_type"] == "user":
-            password = request.form["password"]
-            register_new_user(username, email, password)
-            return render_template("login.html")
+            password = request.form["password1"]
+            password2 = request.form["password2"]
+            if password == password2:
+                register_new_user(username, email, password)
+                return render_template("login.html")
+            else:
+                return render_template("register.html")
 
         elif request.form["user_type"] == "client":
             phoneNum = request.form["clientPhone"]
