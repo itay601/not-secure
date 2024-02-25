@@ -5,6 +5,7 @@ CREATE TABLE user(
    username varchar(100) not null,
    email varchar(100) not null,
    password varchar(100) not null,
+   code varchar(100) ,
    UNIQUE(email)
 );
 

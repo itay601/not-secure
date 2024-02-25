@@ -89,3 +89,57 @@ def reset_password_and_send_email(email):
 
     finally:
         connection.close()
+
+
+
+def reset_Code_and_send_email(code):
+    host = "127.0.0.1"
+    user = "root"
+    password = "my-secret-pw"
+    dbname = "USERS"
+
+    # Connect to the database
+    connection = pymysql.connect(
+        host=host,
+        user=user,
+        password=password,
+        database=dbname,
+        port=3456,
+        cursorclass=pymysql.cursors.DictCursor,
+    )
+
+    try:
+        with connection.cursor() as cursor:
+            # Check if the user exists
+            sql_select_user = "SELECT * FROM user WHERE email=%s"
+            cursor.execute(sql_select_user, (code,))
+            user_data = cursor.fetchone()
+
+            if user_data:
+                # Generate a new random password
+                new_password = generate_random_password()
+                username = user_data["username"]
+                ph = PasswordHasher()
+                pHash = ph.hash(new_password)
+
+                # Update the user's password in the database
+                sql_update_password = "UPDATE user SET password=%s WHERE username=%s"
+                cursor.execute(sql_update_password, (pHash, username))
+
+                # Send the new password to the user's email
+                receiver_email = user_data["email"]
+                email_subject = "Password Reset"
+                email_body = f"Your new password is: {new_password}"
+                send_email(receiver_email, email_subject, email_body)
+
+                print(
+                    "Password reset successfully. Check your email for the new password."
+                )
+            else:
+                print("User not found.")
+
+    except pymysql.Error as e:
+        print(f"Database error: {e}")
+
+    finally:
+        connection.close()

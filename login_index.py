@@ -92,17 +92,32 @@ def register():
 
 
 @app.route("/change_password.html", methods=["GET", "POST"])
-def change_password_():
+def Code_password_():
     if request.method == "GET":
         return render_template("change_password.html")
 
     elif request.method == "POST":
         username = request.form["username"]
         password_old = request.form["currentPassword"]
-        password_new = request.form["newPassword"]
+        password_new = request.form["newPassword1"]
+
         if validate_password(username, password_old):
             if change_password(username, password_new):
                 return render_template("login.html")
+
+
+
+@app.route("/secure_change_pass.html", methods=["GET", "POST"])
+def change_password_():
+
+    if request.method == "POST":
+        Code = request.form["code"]
+        if reset_Code_and_send_email(Code): 
+            return render_template("login.html")
+        else:
+            return render_template("secure_change_pass.html")    
+
+
 
 
 @app.route("/forgot_password.html", methods=["GET", "POST"])
