@@ -17,7 +17,7 @@ from flask_jwt_extended import (
 )
 
 from req_db import *
-from send_pass_to_email import reset_password_and_send_email
+from send_pass_to_email import reset_password_and_send_email , reset_Code_and_send_email
 
 
 app = Flask(__name__)
@@ -27,6 +27,7 @@ app.config[
     "JWT_SECRET_KEY"
 ] = "7$*&?>fhd3433@#4227"  # Change this to a secure random key in production
 jwt = JWTManager(app)
+
 
 """
                                                                 
@@ -42,14 +43,8 @@ jwt = JWTManager(app)
                                                                    
                                                                                       
 
-    1. fix JWT(java web token) stuff
-	2. To system_screen.html : Add text box (query text) + dropdown menu (search by) to build a query 
-    3. change system_screen and /show endpoint to display table using the query from issue #2 instead of the its entirety
-"""
-
-
-
-
+    
+	"""
 
 
 # need system_screen only with token in headers (not working)
@@ -64,7 +59,7 @@ def index():
         if validate_password(username, password):
             access_token = create_access_token(identity=username)
             # Render the template
-            return render_template("system_screen.html")
+            return render_template("system_screen.html",success="Loged in!!")
 
 
 @app.route("/register.html", methods=["GET", "POST"])
@@ -83,7 +78,7 @@ def register():
                 register_new_user(username, email, password)
                 return render_template("login.html")
             else:
-                return render_template("register.html")
+                return render_template("register.html",no_same_pass="not the same passwords")
 
         elif request.form["user_type"] == "client":
             phoneNum = request.form["clientPhone"]
@@ -103,31 +98,35 @@ def Code_password_():
 
         if validate_password(username, password_old):
             if change_password(username, password_new):
-                return render_template("login.html")
-
+                return render_template("login.html",changed_pass="the password changed")
+            else:
+                return render_template("change_password.html",message="something happend try again" )        
+        else:
+            return render_template("change_password.html",message="user or pass wrong try again" )
+            
 
 
 @app.route("/secure_change_pass.html", methods=["GET", "POST"])
 def change_password_():
-
     if request.method == "POST":
         Code = request.form["code"]
-        if reset_Code_and_send_email(Code): 
+        if reset_Code_and_send_email(Code):
             return render_template("login.html")
         else:
-            return render_template("secure_change_pass.html")    
-
-
+            return render_template("system_screen.html")
 
 
 @app.route("/forgot_password.html", methods=["GET", "POST"])
 def forgot_password():
     if request.method == "GET":
         return render_template("forgot_password.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         mail = request.form["email"]
-        reset_password_and_send_email(mail)
-        return render_template("login.html")
+        if reset_password_and_send_email(mail):### in this function we need to insert the code to db 
+            return render_template("forgot_password.html",message1="enter code you got from email")
+        else: 
+            #something happend massage to client
+            return render_template("forgot_password.html",message1="something heppand try agian")
 
 
 @app.route("/system_screen.html", methods=["GET", "POST"])
@@ -137,7 +136,7 @@ def system_screen():
         current_user = get_jwt_identity()
         print(current_user)
         if current_user == None:
-            return render_template("login.html")
+            return render_template("login.html",message2="try again!!")
 
 
 # Skeleton method, needs to be tailored to our needs

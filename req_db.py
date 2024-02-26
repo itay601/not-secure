@@ -16,6 +16,9 @@ def common_passwords(password,passwords111):
         
     print("not common password")    
 
+
+
+
 #common_passwords("assword",passwords111)
 ##########################################################################
 import hashlib
@@ -26,7 +29,7 @@ def hash1_password(password):
     sha1_hash = hashlib.sha1(random_password.encode()).hexdigest()
     return sha1_hash
 
-
+#####################################################################
 
 
 
@@ -79,6 +82,9 @@ def validate_password(username, pWord):
     finally:
         if connection:
             connection.close()
+
+
+
 
 
 def change_password(username, pWord):

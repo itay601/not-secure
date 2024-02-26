@@ -81,6 +81,7 @@ def reset_password_and_send_email(email):
                 print(
                     "Password reset successfully. Check your email for the new password."
                 )
+                return 1
             else:
                 print("User not found.")
 
@@ -89,7 +90,6 @@ def reset_password_and_send_email(email):
 
     finally:
         connection.close()
-
 
 
 def reset_Code_and_send_email(code):
@@ -143,3 +143,6 @@ def reset_Code_and_send_email(code):
 
     finally:
         connection.close()
+
+
+
