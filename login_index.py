@@ -76,7 +76,7 @@ def register():
             password2 = request.form["password2"]
             if password == password2:
                 register_new_user(username, email, password)
-                return render_template("login.html")
+                return render_template("system_screen.html",success="you registered!!")
             else:
                 return render_template("register.html",no_same_pass="not the same passwords")
 
@@ -111,9 +111,9 @@ def change_password_():
     if request.method == "POST":
         Code = request.form["code"]
         if reset_Code_and_send_email(Code):
-            return render_template("login.html")
+            return render_template("system_screen.html",success="Loged in!!")
         else:
-            return render_template("system_screen.html")
+            return render_template("forgot_password.html",message2="wrong Code try again")
 
 
 @app.route("/forgot_password.html", methods=["GET", "POST"])

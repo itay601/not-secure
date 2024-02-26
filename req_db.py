@@ -30,9 +30,10 @@ def hash1_password(password):
     return sha1_hash
 
 #####################################################################
-
-
-
+#itay
+ph = PasswordHasher()
+name = ph.hash("itay")
+print(name)
 
 
 
