@@ -29,7 +29,7 @@ CREATE TABLE userpass(
    passwordtemp varchar(100) not null,
    passwordsecond varchar(100) not null,
    passwordthird varchar(100) not null, 
-   PRIMARY KEY(id), FOREIGN KEY(uname) REFERENCES user(username)
+   PRIMARY KEY(id), 
 );
 
 insert into userpass(uname, passwordtemp, passwordsecond, passwordthird)
