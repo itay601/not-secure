@@ -10,7 +10,6 @@ from email.mime.application import MIMEApplication
 def generate_random_password(length=12):
     import random
     import string
-
     characters = string.ascii_letters + string.digits + string.punctuation
     return "".join(random.choice(characters) for _ in range(length))
 
@@ -65,8 +64,8 @@ def reset_password_and_send_email(email):
                 # Generate a new random password
                 new_password = generate_random_password()
                 username = user_data["username"]
-                ph = PasswordHasher()
-                pHash = ph.hash(new_password)
+                #ph = PasswordHasher()
+                pHash = hash1_password(new_password)
 
                 # Update the user's password in the database
                 sql_update_password = "UPDATE user SET password=%s WHERE username=%s"

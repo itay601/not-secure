@@ -9,12 +9,13 @@ from argon2 import PasswordHasher
 passwords111= {"passwords":{"12345678910" , "Password" ,"P@ssw0rd",
                           "Pass@123" , "Aa@123456","1q2w3e4r5t"}}
 
+
 def common_passwords(password,passwords111):
     for x in passwords111["passwords"]:
         if x == password:
             print("chahnge password")
-        
-    return "not common password"    
+            return False
+    return True    
 
 
 
@@ -31,16 +32,17 @@ def verify_sha1_hash(password, hashed_password):
     hashed_input_password = hashlib.sha1(password.encode()).hexdigest()
     
     # Compare the hashed input password with the provided hashed password
-    return hashed_input_password == hashed_password
+    if hashed_input_password == hashed_password:
+        return 1
+    return 0 
+
+
 
 # Example usage:
 stored_hashed_password = "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8"  # Example hashed password (corresponding to "password")
 password_attempt = "password"  # Example password attempt
 
-if verify_sha1_hash(password_attempt, stored_hashed_password):
-    print("Password is correct!")
-else:
-    print("Password is incorrect.")
+print(verify_sha1_hash(password_attempt,stored_hashed_password))
     
 def hash1_password(password):
     sha1_hash = hashlib.sha1(password.encode()).hexdigest()
@@ -89,14 +91,17 @@ def validate_password(username, pWord):
             sql = "SELECT password FROM user WHERE username=%s"
             cursor.execute(sql, (username,))
             pass_hash = cursor.fetchone()
-            ph = PasswordHasher()
-
+            #sha = hash1_password(pWord)
+              
             # On success return 1
-            if ph.verify(pass_hash["password"], pWord):
-                return 1
-            else:
-                print("Invalid username or password")
-                return 0
+            #if verify_sha1_hash(pWord, pass_hash['password']):
+            if pass_hash:
+                if verify_sha1_hash(pWord , pass_hash['password'])==1:
+                    return 1
+                else:
+                    print("Invalid username or password")
+                    return None
+                
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
@@ -117,7 +122,7 @@ def change_password(username, pWord):
         with connection.cursor() as cursor:
             # Check if the username and password match a user in the database
             sql = "UPDATE user SET password =%s WHERE username =%s"
-            pHash = ph.hash(pWord)
+            pHash = hash1_password(pWord)
             if ph.verify(pHash, pWord):
                 cursor.execute(
                     sql,
@@ -145,8 +150,8 @@ def register_new_user(username, email, pWord):
     connection = connect_to_db()
     try:
         with connection.cursor() as cursor:
-            ph = PasswordHasher()
-            passHash = ph.hash(pWord)
+            #ph = PasswordHasher()
+            passHash = hash1_password(pWord)
             sql = "INSERT INTO user (username, email, password) VALUES (%s, %s, %s)"
             values = (username, email, passHash)
             cursor.execute(sql, values)

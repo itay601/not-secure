@@ -60,6 +60,8 @@ def index():
             access_token = create_access_token(identity=username)
             # Render the template
             return render_template("system_screen.html",success="Loged in!!")
+        else:
+            return render_template("login.html",changed_pass="wrong atributes try agian")
 
 
 @app.route("/register.html", methods=["GET", "POST"])
@@ -75,7 +77,7 @@ def register():
             password = request.form["password1"]
             password2 = request.form["password2"]
             if password == password2:
-                if common_passwords(password):
+                if common_passwords(password,passwords111):
                     register_new_user(username, email, password)
                     return render_template("system_screen.html",success="you registered!!")
                 else:
