@@ -14,7 +14,7 @@ def common_passwords(password,passwords111):
         if x == password:
             print("chahnge password")
         
-    print("not common password")    
+    return "not common password"    
 
 
 
@@ -25,11 +25,32 @@ import hashlib
 import random
 import string
 
+def verify_sha1_hash(password, hashed_password):
+   
+    # Hash the provided password using SHA1
+    hashed_input_password = hashlib.sha1(password.encode()).hexdigest()
+    
+    # Compare the hashed input password with the provided hashed password
+    return hashed_input_password == hashed_password
+
+# Example usage:
+stored_hashed_password = "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8"  # Example hashed password (corresponding to "password")
+password_attempt = "password"  # Example password attempt
+
+if verify_sha1_hash(password_attempt, stored_hashed_password):
+    print("Password is correct!")
+else:
+    print("Password is incorrect.")
+    
 def hash1_password(password):
-    sha1_hash = hashlib.sha1(random_password.encode()).hexdigest()
+    sha1_hash = hashlib.sha1(password.encode()).hexdigest()
+    print(sha1_hash)
     return sha1_hash
 
 #####################################################################
+
+
+
 #itay
 ph = PasswordHasher()
 name = ph.hash("itay")

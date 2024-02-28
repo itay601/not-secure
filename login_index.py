@@ -75,8 +75,11 @@ def register():
             password = request.form["password1"]
             password2 = request.form["password2"]
             if password == password2:
-                register_new_user(username, email, password)
-                return render_template("system_screen.html",success="you registered!!")
+                if common_passwords(password):
+                    register_new_user(username, email, password)
+                    return render_template("system_screen.html",success="you registered!!")
+                else:
+                    return render_template("register.html",no_same_pass="too easy try stronger password")
             else:
                 return render_template("register.html",no_same_pass="not the same passwords")
 
