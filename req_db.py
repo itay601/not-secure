@@ -140,7 +140,7 @@ def change_password(username, pWord):
             connection.close()
 
 
-change_password("q","qq")
+
 
 
 def register_new_user(username, email, pWord):

@@ -6,6 +6,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 
+from req_db import *
 
 def generate_random_password(length=12):
     import random
@@ -69,7 +70,9 @@ def reset_password_and_send_email(email):
 
                 # Update the user's password in the database
                 sql_update_password = "UPDATE user SET password=%s WHERE username=%s"
-                cursor.execute(sql_update_password, (pHash, username))
+                values = (pHash, username)
+                cursor.execute(sql_update_password, values)
+                connection.commit()
 
                 # Send the new password to the user's email
                 receiver_email = user_data["email"]
@@ -89,6 +92,11 @@ def reset_password_and_send_email(email):
 
     finally:
         connection.close()
+
+reset_password_and_send_email("itaymerel1212@gmail.com")
+
+
+
 
 
 def reset_Code_and_send_email(code):
