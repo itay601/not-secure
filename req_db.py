@@ -42,7 +42,7 @@ def verify_sha1_hash(password, hashed_password):
 stored_hashed_password = "5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8"  # Example hashed password (corresponding to "password")
 password_attempt = "password"  # Example password attempt
 
-print(verify_sha1_hash(password_attempt,stored_hashed_password))
+
     
 def hash1_password(password):
     sha1_hash = hashlib.sha1(password.encode()).hexdigest()
@@ -116,34 +116,31 @@ def validate_password(username, pWord):
 
 def change_password(username, pWord):
     # Connect to the database
-    ph = PasswordHasher()
     connection = connect_to_db()
     try:
         with connection.cursor() as cursor:
             # Check if the username and password match a user in the database
             sql = "UPDATE user SET password =%s WHERE username =%s"
             pHash = hash1_password(pWord)
-            if ph.verify(pHash, pWord):
-                cursor.execute(
-                    sql,
-                    (
-                        pHash,
-                        username,
-                    ),
-                )
-                connection.commit()
-                print("commited update")
-                return 1
-            else:
-                raise pymysql.Error
+            if verify_sha1_hash(pWord,pHash)==0:
+                return None
+            values = (pHash, username)
+            cursor.execute(sql, values)
+            connection.commit()
+            print("commited update")
+            return 1
+            
 
     except pymysql.Error as e:
         print(f"Database error: {e}")
-        return 0
+        
 
     finally:
         if connection:
             connection.close()
+
+
+change_password("q","qq")
 
 
 def register_new_user(username, email, pWord):

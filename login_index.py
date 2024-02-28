@@ -100,9 +100,8 @@ def Code_password_():
         username = request.form["username"]
         password_old = request.form["currentPassword"]
         password_new = request.form["newPassword1"]
-
-        if validate_password(username, password_old):
-            if change_password(username, password_new):
+        if validate_password(username, password_old)==1:
+            if change_password(username, password_new)==1:
                 return render_template("login.html",changed_pass="the password changed")
             else:
                 return render_template("change_password.html",message="something happend try again" )        
