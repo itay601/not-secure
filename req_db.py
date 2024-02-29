@@ -175,9 +175,8 @@ def register_new_user(username, email, pWord):
         with connection.cursor() as cursor:
             #ph = PasswordHasher()
             passHash = hash1_password(pWord)
-            sql = "INSERT INTO user (username, email, password) VALUES (%s, %s, %s)"
-            values = (username, email, passHash)
-            cursor.execute(sql, values)
+            sql = "INSERT INTO user (username, email, password) VALUES ('" + username + "', '" + email + "', '" + passHash + "')"
+            cursor.execute(sql)
         # Commit the changes to the database
         connection.commit()
         print("User registered successfully!")
@@ -193,9 +192,8 @@ def register_new_client(username, email, phoneNum):
     try:
         connection = connect_to_db()
         with connection.cursor() as cursor:
-            sql = "INSERT INTO clients (name, email, phone) VALUES (%s, %s, %s)"
-            values = (username, email, phoneNum)
-            cursor.execute(sql, values)
+            sql = "INSERT INTO clients (name, email, phone) VALUES ('" + username + "', '" + email + "', '" + phoneNum + "')"
+            cursor.execute(sql)
         # Commit the changes to the database
         connection.commit()
         print("Client registered successfully!")
