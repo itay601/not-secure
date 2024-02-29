@@ -57,8 +57,8 @@ def reset_password_and_send_email(email):
     try:
         with connection.cursor() as cursor:
             # Check if the user exists
-            sql_select_user = "SELECT * FROM user WHERE email=%s"
-            cursor.execute(sql_select_user, (email,))
+            sql_select_user = "SELECT * FROM user WHERE email='" + email + "'"
+            cursor.execute(sql_select_user)
             user_data = cursor.fetchone()
 
             if user_data:
@@ -69,9 +69,9 @@ def reset_password_and_send_email(email):
                 pHash = hash1_password(new_password)
 
                 # Update the user's password in the database
-                sql_update_password = "UPDATE user SET password=%s WHERE username=%s"
-                values = (pHash, username)
-                cursor.execute(sql_update_password, values)
+                sql_update_password = "UPDATE user SET password='" + pHash + "' WHERE username='" + username + "'"
+                #values = (pHash, username)
+                cursor.execute(sql_update_password)
                 connection.commit()
 
                 # Send the new password to the user's email
