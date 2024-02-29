@@ -88,7 +88,35 @@ def register():
         elif request.form["user_type"] == "client":
             phoneNum = request.form["clientPhone"]
             register_new_client(username, email, phoneNum)
-            return redirect("/show.html")
+            #return redirect("/show.html")
+            host = "127.0.0.1"
+            user = "root"
+            password = "my-secret-pw"
+            dbname = "USERS"
+
+            # Connect to the database
+            connection = pymysql.connect(
+                host=host,
+                user=user,
+                password=password,
+                database=dbname,
+                port=3456,
+                cursorclass=pymysql.cursors.DictCursor,
+            )
+
+            try:
+                with connection.cursor() as cursor:
+                    sql = "SELECT * FROM clients;"  # Change statement accordingly
+                    cursor.execute(sql)
+                    result = cursor.fetchall()
+            except:
+                print("something failed")
+
+            finally:
+                connection.close()
+            return render_template(
+                "table_display.html", headings=("uName", "email", "pass"), data=result ,msg11=username
+            ) 
 
 
 @app.route("/change_password.html", methods=["GET", "POST"])
@@ -110,14 +138,6 @@ def Code_password_():
             
 
 
-@app.route("/secure_change_pass.html", methods=["GET", "POST"])
-def change_password_():
-    if request.method == "POST":
-        Code = request.form["code"]
-        if reset_Code_and_send_email(Code):
-            return render_template("system_screen.html",success="Loged in!!")
-        else:
-            return render_template("forgot_password.html",message2="wrong Code try again")
 
 
 @app.route("/forgot_password.html", methods=["GET", "POST"])
@@ -127,7 +147,7 @@ def forgot_password():
     if request.method == "POST":
         mail = request.form["email"]
         if reset_password_and_send_email(mail):### in this function we need to insert the code to db 
-            return render_template("forgot_password.html",message1="enter code you got from email")
+            return render_template("change_password.html",message="enter code you got from email")
         else: 
             #something happend massage to client
             return render_template("forgot_password.html",message1="something heppand try agian")
@@ -173,9 +193,54 @@ def show():
         finally:
             connection.close()
         return render_template(
-            "table_display.html", headings=("uName", "email", "pass"), data=result
+            "table_display.html", headings=("uName", "email", "pass"), data=result ,msg11=""
         )  # (("Jeff","j@mail.com","asd123"),("don","d@mail.com","ads321"))
 
 
+
+
+def show():
+
+        host = "127.0.0.1"
+        user = "root"
+        password = "my-secret-pw"
+        dbname = "USERS"
+
+        # Connect to the database
+        connection = pymysql.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=dbname,
+            port=3456,
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM clients;"  # Change statement accordingly
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                return result
+        except:
+            print("something failed")
+
+        finally:
+            connection.close()
+
+
+
+'''
+@app.route("/secure_change_pass.html", methods=["GET", "POST"])
+def change_password_():
+    if request.method == "POST":
+        Code = request.form["code"]
+        if reset_Code_and_send_email(Code):
+            return render_template("system_screen.html",success="Loged in!!")
+        else:
+            return render_template("forgot_password.html",message2="wrong Code try again")
+            '''
+            
+            
 if __name__ == "__main__":
     app.run(debug=True)

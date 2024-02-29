@@ -6,7 +6,12 @@
   	<title>Document</title>
   </head>
   <body>
-  	<table>
+	<div><p>{{msg11}}</p> </div>
+<script>
+    var msg11 = "{{ msg11 }}";
+    alert(msg11);
+</script>
+ 	<table>
   	  <tr>
   	    {% for header in headings %}
   	    	<th>{{ header }}</th>

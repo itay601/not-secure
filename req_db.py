@@ -54,12 +54,38 @@ def hash1_password(password):
 
 
 #itay
-ph = PasswordHasher()
-name = ph.hash("itay")
-print(name)
+#ph = PasswordHasher()
+#name = ph.hash("itay")
+#print(name)
 
 
+def show():
+        host = "127.0.0.1"
+        user = "root"
+        password = "my-secret-pw"
+        dbname = "USERS"
 
+        # Connect to the database
+        connection = pymysql.connect(
+            host=host,
+            user=user,
+            password=password,
+            database=dbname,
+            port=3456,
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+
+        try:
+            with connection.cursor() as cursor:
+                sql = "SELECT * FROM clients;"  # Change statement accordingly
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                return result
+        except:
+            print("something failed")
+
+        finally:
+            connection.close()
 
 
 
