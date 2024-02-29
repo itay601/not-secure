@@ -17,7 +17,7 @@ from flask_jwt_extended import (
 )
 
 from req_db import *
-from send_pass_to_email import reset_password_and_send_email , reset_Code_and_send_email
+from send_pass_to_email import reset_password_and_send_email 
 
 
 app = Flask(__name__)
@@ -47,6 +47,7 @@ jwt = JWTManager(app)
 	"""
 
 
+login_attempts = {}
 # need system_screen only with token in headers (not working)
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -56,12 +57,21 @@ def index():
     elif request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        # Check if the user has exceeded the login attempts
+        if username in login_attempts and login_attempts[username] >= 2:
+            return render_template("forgot_password.html",message1="only email for now ,to much login requests!!")
+
         if validate_password(username, password):
             access_token = create_access_token(identity=username)
+            if username in login_attempts:
+                del login_attempts[username]
             # Render the template
             return render_template("system_screen.html",success="Loged in!!")
         else:
-            return render_template("login.html",changed_pass="wrong atributes try agian")
+            login_attempts[username] = login_attempts.get(username, 0) + 1
+            return render_template("login.html",changed_pass="try agian")
+
+
 
 
 @app.route("/register.html", methods=["GET", "POST"])
@@ -77,46 +87,15 @@ def register():
             password = request.form["password1"]
             password2 = request.form["password2"]
             if password == password2:
-                if common_passwords(password,passwords111):
-                    register_new_user(username, email, password)
-                    return render_template("system_screen.html",success="you registered!!")
-                else:
-                    return render_template("register.html",no_same_pass="too easy try stronger password")
+                register_new_user(username, email, password)
+                return render_template("system_screen.html",success="you registered!!")
             else:
                 return render_template("register.html",no_same_pass="not the same passwords")
 
         elif request.form["user_type"] == "client":
             phoneNum = request.form["clientPhone"]
             register_new_client(username, email, phoneNum)
-            #return redirect("/show.html")
-            host = "127.0.0.1"
-            user = "root"
-            password = "my-secret-pw"
-            dbname = "USERS"
-
-            # Connect to the database
-            connection = pymysql.connect(
-                host=host,
-                user=user,
-                password=password,
-                database=dbname,
-                port=3456,
-                cursorclass=pymysql.cursors.DictCursor,
-            )
-
-            try:
-                with connection.cursor() as cursor:
-                    sql = "SELECT * FROM clients;"  # Change statement accordingly
-                    cursor.execute(sql)
-                    result = cursor.fetchall()
-            except:
-                print("something failed")
-
-            finally:
-                connection.close()
-            return render_template(
-                "table_display.html", headings=("uName", "email", "pass"), data=result ,msg11=username
-            ) 
+            return redirect("/show.html")
 
 
 @app.route("/change_password.html", methods=["GET", "POST"])
@@ -128,8 +107,9 @@ def Code_password_():
         username = request.form["username"]
         password_old = request.form["currentPassword"]
         password_new = request.form["newPassword1"]
-        if validate_password(username, password_old)==1:
-            if change_password(username, password_new)==1:
+
+        if validate_password(username, password_old):
+            if change_password(username, password_new):
                 return render_template("login.html",changed_pass="the password changed")
             else:
                 return render_template("change_password.html",message="something happend try again" )        
@@ -193,54 +173,9 @@ def show():
         finally:
             connection.close()
         return render_template(
-            "table_display.html", headings=("uName", "email", "pass"), data=result ,msg11=""
+            "table_display.html", headings=("uName", "email", "pass"), data=result
         )  # (("Jeff","j@mail.com","asd123"),("don","d@mail.com","ads321"))
 
 
-
-
-def show():
-
-        host = "127.0.0.1"
-        user = "root"
-        password = "my-secret-pw"
-        dbname = "USERS"
-
-        # Connect to the database
-        connection = pymysql.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=dbname,
-            port=3456,
-            cursorclass=pymysql.cursors.DictCursor,
-        )
-
-        try:
-            with connection.cursor() as cursor:
-                sql = "SELECT * FROM clients;"  # Change statement accordingly
-                cursor.execute(sql)
-                result = cursor.fetchall()
-                return result
-        except:
-            print("something failed")
-
-        finally:
-            connection.close()
-
-
-
-'''
-@app.route("/secure_change_pass.html", methods=["GET", "POST"])
-def change_password_():
-    if request.method == "POST":
-        Code = request.form["code"]
-        if reset_Code_and_send_email(Code):
-            return render_template("system_screen.html",success="Loged in!!")
-        else:
-            return render_template("forgot_password.html",message2="wrong Code try again")
-            '''
-            
-            
 if __name__ == "__main__":
     app.run(debug=True)
