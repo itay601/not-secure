@@ -58,7 +58,7 @@ def index():
         username = request.form["username"]
         password = request.form["password"]
         # Check if the user has exceeded the login attempts
-        if username in login_attempts and login_attempts[username] >= 2:
+        if username in login_attempts and login_attempts[username] >= 50:
             return render_template("forgot_password.html",message1="only email for now ,to much login requests!!")
 
         if validate_password(username, password):

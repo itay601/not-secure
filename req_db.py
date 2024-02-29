@@ -114,8 +114,8 @@ def validate_password(username, pWord):
     try:
         with connection.cursor() as cursor:
             # Check if the username and password match a user in the database
-            sql = "SELECT password FROM user WHERE username=%s"
-            cursor.execute(sql, (username,))
+            sql = "SELECT password FROM user WHERE username='"+username+"'"
+            cursor.execute(sql)
             pass_hash = cursor.fetchone()
             #sha = hash1_password(pWord)
               
@@ -146,12 +146,12 @@ def change_password(username, pWord):
     try:
         with connection.cursor() as cursor:
             # Check if the username and password match a user in the database
-            sql = "UPDATE user SET password =%s WHERE username =%s"
             pHash = hash1_password(pWord)
+            sql = "UPDATE user SET password ='"+pHash+"' WHERE username ='"+username+"'"
             if verify_sha1_hash(pWord,pHash)==0:
                 return None
-            values = (pHash, username)
-            cursor.execute(sql, values)
+            #values = (pHash, username)
+            cursor.execute(sql)
             connection.commit()
             print("commited update")
             return 1
