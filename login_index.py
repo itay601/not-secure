@@ -95,7 +95,34 @@ def register():
         elif request.form["user_type"] == "client":
             phoneNum = request.form["clientPhone"]
             register_new_client(username, email, phoneNum)
-            return redirect("/show.html")
+            host = "127.0.0.1"
+            user = "root"
+            password = "my-secret-pw"
+            dbname = "USERS"
+
+            # Connect to the database
+            connection = pymysql.connect(
+                host=host,
+                user=user,
+                password=password,
+                database=dbname,
+                port=3456,
+                cursorclass=pymysql.cursors.DictCursor,
+            )
+
+            try:
+                with connection.cursor() as cursor:
+                    sql = "SELECT * FROM clients;"  # Change statement accordingly
+                    cursor.execute(sql)
+                    result = cursor.fetchall()
+            except:
+                print("something failed")
+
+            finally:
+                connection.close()
+            return render_template(
+                "table_display.html", headings=("uName", "email", "pass"), data=result,msg11=username
+            )
 
 
 @app.route("/change_password.html", methods=["GET", "POST"])
