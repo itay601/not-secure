@@ -93,7 +93,7 @@ def reset_password_and_send_email(email):
     finally:
         connection.close()
 
-reset_password_and_send_email("itaymerel1212@gmail.com")
+
 
 
 
